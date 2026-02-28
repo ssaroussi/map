@@ -2,11 +2,17 @@ import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
 import { getSiblings } from '../algorithms/treeUtils';
 
+// Persists across renders — tracks the last node that was selected
+let lastSelectedId: string | null = null;
+
 export function useKeyboard() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const store = useMapStore.getState();
       const { selectedId, editingId, labelEditingId, nodes, rootId } = store;
+
+      // Track last selected node so Escape + navigate resumes from it
+      if (selectedId) lastSelectedId = selectedId;
 
       // Always allow typing in inputs/textareas
       const target = e.target as HTMLElement;
@@ -68,8 +74,11 @@ export function useKeyboard() {
       }
 
       if (!selectedId) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          store.setSelected(rootId);
+        const navKeys = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','h','j','k','l','Enter',' ','Tab'];
+        if (navKeys.includes(e.key)) {
+          e.preventDefault();
+          const resumeId = lastSelectedId && nodes[lastSelectedId] ? lastSelectedId : rootId;
+          store.setSelected(resumeId);
         }
         return;
       }
@@ -131,14 +140,24 @@ export function useKeyboard() {
         case 'h': {
           e.preventDefault();
           const node = nodes[selectedId];
-          // Left always means "towards parent" for right-side nodes,
-          // "towards children" for left-side nodes — i.e. visually leftward.
           const goToParent = node && node.x >= 0;
           if (goToParent) {
-            if (node.parentId) store.setSelected(node.parentId);
+            if (node.parentId) {
+              store.setSelected(node.parentId);
+            } else {
+              // Already at root — move up visually
+              const siblings = getSiblings(nodes, selectedId);
+              const idx = siblings.indexOf(selectedId);
+              if (idx > 0) store.setSelected(siblings[idx - 1]);
+            }
           } else {
             if (node && node.children.length > 0 && !node.collapsed) {
               store.setSelected(node.children[0]);
+            } else {
+              // Dead end — move up visually
+              const siblings = getSiblings(nodes, selectedId);
+              const idx = siblings.indexOf(selectedId);
+              if (idx > 0) store.setSelected(siblings[idx - 1]);
             }
           }
           break;
@@ -147,15 +166,25 @@ export function useKeyboard() {
         case 'l': {
           e.preventDefault();
           const node = nodes[selectedId];
-          // Right always means "towards children" for right-side nodes,
-          // "towards parent" for left-side nodes — i.e. visually rightward.
           const goToChildren = node && node.x >= 0;
           if (goToChildren) {
             if (node.children.length > 0 && !node.collapsed) {
               store.setSelected(node.children[0]);
+            } else {
+              // Dead end — move down visually
+              const siblings = getSiblings(nodes, selectedId);
+              const idx = siblings.indexOf(selectedId);
+              if (idx < siblings.length - 1) store.setSelected(siblings[idx + 1]);
             }
           } else {
-            if (node?.parentId) store.setSelected(node.parentId);
+            if (node?.parentId) {
+              store.setSelected(node.parentId);
+            } else {
+              // Dead end — move down visually
+              const siblings = getSiblings(nodes, selectedId);
+              const idx = siblings.indexOf(selectedId);
+              if (idx < siblings.length - 1) store.setSelected(siblings[idx + 1]);
+            }
           }
           break;
         }

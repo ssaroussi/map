@@ -36,5 +36,7 @@ export function getAllDescendants(nodes: Record<string, MindNode>, nodeId: strin
 export function getSiblings(nodes: Record<string, MindNode>, nodeId: string): string[] {
   const node = nodes[nodeId];
   if (!node?.parentId) return [];
-  return nodes[node.parentId]?.children || [];
+  const siblings = nodes[node.parentId]?.children || [];
+  // Sort by actual Y position so keyboard navigation follows visual order
+  return [...siblings].sort((a, b) => (nodes[a]?.y ?? 0) - (nodes[b]?.y ?? 0));
 }

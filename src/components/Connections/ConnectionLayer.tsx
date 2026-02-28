@@ -3,6 +3,7 @@ import { BezierConnection } from './BezierConnection';
 
 export function ConnectionLayer() {
   const nodes = useMapStore(s => s.nodes);
+  const rootId = useMapStore(s => s.rootId);
 
   const connections: Array<{ id: string; from: string; to: string }> = [];
   for (const node of Object.values(nodes)) {
@@ -25,6 +26,26 @@ export function ConnectionLayer() {
       }}
     >
       <defs>
+        {/* Arrowhead marker per connection color — one per child node color */}
+        {connections.map(({ id, to }) => {
+          const toNode = nodes[to];
+          if (!toNode) return null;
+          return (
+            <marker
+              key={`arrow-${id}`}
+              id={`arrow-${id}`}
+              markerWidth="6"
+              markerHeight="6"
+              refX="5"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M 0 0 L 6 3 L 0 6 z" fill={toNode.color} />
+            </marker>
+          );
+        })}
+
+        {/* Gradient per connection */}
         {connections.map(({ id, from, to }) => {
           const fromNode = nodes[from];
           const toNode = nodes[to];
@@ -39,22 +60,23 @@ export function ConnectionLayer() {
           );
         })}
       </defs>
+
       {connections.map(({ id, from, to }) => {
         const fromNode = nodes[from];
         const toNode = nodes[to];
         if (!fromNode || !toNode) return null;
-        const childNode = nodes[to];
-        if (!childNode) return null;
-        // Check if child is visible (not collapsed ancestor)
         return (
           <BezierConnection
             key={id}
             id={id}
-            x1={fromNode.x + 5000}
-            y1={fromNode.y + 5000}
-            x2={toNode.x + 5000}
-            y2={toNode.y + 5000}
+            fromX={fromNode.x + 5000}
+            fromY={fromNode.y + 5000}
+            fromIsRoot={from === rootId}
+            toX={toNode.x + 5000}
+            toY={toNode.y + 5000}
+            toIsRoot={false}
             gradientId={`grad-${id}`}
+            arrowId={`arrow-${id}`}
           />
         );
       })}

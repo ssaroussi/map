@@ -109,7 +109,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
           ? `radial-gradient(ellipse at center, #1a1a2e, #0f0f1a)`
           : `rgba(255,255,255,0.05)`,
         border: `1.5px solid ${isRoot ? node.color + '60' : isSelected ? node.color : 'rgba(255,255,255,0.1)'}`,
-        borderRadius: isRoot ? '50%' : '10px',
+        borderRadius: '10px',
         color: '#e8e8f0',
         fontSize: isRoot ? '15px' : '13px',
         fontWeight: isRoot ? 700 : 500,
