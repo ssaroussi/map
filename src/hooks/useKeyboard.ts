@@ -134,7 +134,17 @@ export function useKeyboard() {
         case 'Backspace': {
           if (selectedId !== rootId) {
             e.preventDefault();
+            const prev = getPrevNode(nodes, selectedId);
             store.deleteNode(selectedId);
+            if (prev && prev !== selectedId) navigateTo(prev);
+          }
+          break;
+        }
+        case 't': {
+          e.preventDefault();
+          const node = nodes[selectedId];
+          if (node && node.children.length > 0) {
+            store.toggleCollapse(selectedId);
           }
           break;
         }
