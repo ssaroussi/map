@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
-import { getSiblings } from '../algorithms/treeUtils';
+import { getSiblings, getNextNode, getPrevNode } from '../algorithms/treeUtils';
 
 // Persists across renders — tracks the last node that was selected
 let lastSelectedId: string | null = null;
@@ -145,49 +145,15 @@ export function useKeyboard() {
         case 'ArrowLeft':
         case 'h': {
           e.preventDefault();
-          const node = nodes[selectedId];
-          const goToParent = node && node.x >= 0;
-          if (goToParent) {
-            if (node.parentId) {
-              navigateTo(node.parentId);
-            } else {
-              const siblings = getSiblings(nodes, selectedId);
-              const idx = siblings.indexOf(selectedId);
-              if (idx > 0) navigateTo(siblings[idx - 1]);
-            }
-          } else {
-            if (node && node.children.length > 0 && !node.collapsed) {
-              navigateTo(node.children[0]);
-            } else {
-              const siblings = getSiblings(nodes, selectedId);
-              const idx = siblings.indexOf(selectedId);
-              if (idx > 0) navigateTo(siblings[idx - 1]);
-            }
-          }
+          const prev = getPrevNode(nodes, selectedId);
+          if (prev) navigateTo(prev);
           break;
         }
         case 'ArrowRight':
         case 'l': {
           e.preventDefault();
-          const node = nodes[selectedId];
-          const goToChildren = node && node.x >= 0;
-          if (goToChildren) {
-            if (node.children.length > 0 && !node.collapsed) {
-              navigateTo(node.children[0]);
-            } else {
-              const siblings = getSiblings(nodes, selectedId);
-              const idx = siblings.indexOf(selectedId);
-              if (idx < siblings.length - 1) navigateTo(siblings[idx + 1]);
-            }
-          } else {
-            if (node?.parentId) {
-              navigateTo(node.parentId);
-            } else {
-              const siblings = getSiblings(nodes, selectedId);
-              const idx = siblings.indexOf(selectedId);
-              if (idx < siblings.length - 1) navigateTo(siblings[idx + 1]);
-            }
-          }
+          const next = getNextNode(nodes, selectedId);
+          if (next) navigateTo(next);
           break;
         }
         case 'ArrowUp':
