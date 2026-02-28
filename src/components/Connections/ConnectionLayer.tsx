@@ -5,9 +5,19 @@ export function ConnectionLayer() {
   const nodes = useMapStore(s => s.nodes);
   const rootId = useMapStore(s => s.rootId);
 
+  // Build the set of visible node IDs by walking only non-collapsed subtrees
+  const visibleIds = new Set<string>();
+  const walk = (id: string) => {
+    const node = nodes[id];
+    if (!node) return;
+    visibleIds.add(id);
+    if (!node.collapsed) node.children.forEach(walk);
+  };
+  walk(rootId);
+
   const connections: Array<{ id: string; from: string; to: string }> = [];
   for (const node of Object.values(nodes)) {
-    if (node.collapsed) continue;
+    if (!visibleIds.has(node.id) || node.collapsed) continue;
     for (const childId of node.children) {
       connections.push({ id: `${node.id}-${childId}`, from: node.id, to: childId });
     }
