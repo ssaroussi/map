@@ -213,7 +213,16 @@ export const useMapStore = create<FullStore>()(
       moveNode: (nodeId, x, y) => {
         set((state) => {
           const node = state.nodes[nodeId];
-          if (node) { node.x = x; node.y = y; node.manuallyPositioned = true; state.isDirty = true; }
+          if (!node) return;
+          const dx = x - node.x;
+          const dy = y - node.y;
+          // Move the node and all descendants by the same delta
+          const toMove = [nodeId, ...getAllDescendants(state.nodes, nodeId)];
+          for (const id of toMove) {
+            const n = state.nodes[id];
+            if (n) { n.x += dx; n.y += dy; n.manuallyPositioned = true; }
+          }
+          state.isDirty = true;
         });
         scheduleSave(get);
       },

@@ -153,6 +153,11 @@ export function useKeyboard() {
           store.setEditing(selectedId);
           break;
         }
+        case 'u': {
+          e.preventDefault();
+          (useTemporalStore.getState() as any).undo();
+          break;
+        }
         case 'Escape': {
           store.setSelected(null);
           store.setContextMenu(null);
