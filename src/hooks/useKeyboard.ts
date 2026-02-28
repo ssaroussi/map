@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
-import { getSiblings, getNextNode, getPrevNode } from '../algorithms/treeUtils';
+import { getSiblings, getNextNode, getPrevNode, getVisualTarget } from '../algorithms/treeUtils';
 
 // Persists across renders — tracks the last node that was selected
 let lastSelectedId: string | null = null;
@@ -166,15 +166,15 @@ export function useKeyboard() {
         case 'ArrowLeft':
         case 'h': {
           e.preventDefault();
-          const prev = getPrevNode(nodes, selectedId);
-          if (prev) navigateTo(prev);
+          const target = getVisualTarget(nodes, selectedId, 'left');
+          if (target) navigateTo(target);
           break;
         }
         case 'ArrowRight':
         case 'l': {
           e.preventDefault();
-          const next = getNextNode(nodes, selectedId);
-          if (next) navigateTo(next);
+          const target = getVisualTarget(nodes, selectedId, 'right');
+          if (target) navigateTo(target);
           break;
         }
         case 'ArrowUp':

@@ -371,11 +371,16 @@ export const useMapStore = create<FullStore>()(
       },
     })),
     {
-      // Only track node/tree changes for undo — viewport is view-only state
+      // Only record a temporal snapshot when nodes are created or deleted
       partialize: (state) => ({
         nodes: state.nodes,
         rootId: state.rootId,
       }),
+      equality: (past, current) => {
+        const pastKeys = Object.keys(past.nodes).sort().join(',');
+        const currentKeys = Object.keys(current.nodes).sort().join(',');
+        return pastKeys === currentKeys;
+      },
     }
   )
 );
