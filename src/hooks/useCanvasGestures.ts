@@ -45,6 +45,16 @@ export function useCanvasGestures() {
       const newX = cx - (cx - x) * (newScale / scale);
       const newY = cy - (cy - y) * (newScale / scale);
       setViewport({ scale: newScale, x: newX, y: newY });
+    } else if (e.shiftKey) {
+      // Shift + scroll → zoom centered on cursor
+      const delta = -e.deltaY * 0.005;
+      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      const newX = cx - (cx - x) * (newScale / scale);
+      const newY = cy - (cy - y) * (newScale / scale);
+      setViewport({ scale: newScale, x: newX, y: newY });
     } else {
       // Two-finger trackpad swipe → pan
       setViewport({ x: x - e.deltaX, y: y - e.deltaY });

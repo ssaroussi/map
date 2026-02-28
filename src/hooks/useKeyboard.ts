@@ -108,28 +108,48 @@ export function useKeyboard() {
           store.setContextMenu(null);
           break;
         }
-        case 'ArrowLeft': {
+        case 'ArrowLeft':
+        case 'h': {
           e.preventDefault();
           const node = nodes[selectedId];
-          if (node && node.children.length > 0 && !node.collapsed) {
-            store.setSelected(node.children[0]);
+          // Left always means "towards parent" for right-side nodes,
+          // "towards children" for left-side nodes — i.e. visually leftward.
+          const goToParent = node && node.x >= 0;
+          if (goToParent) {
+            if (node.parentId) store.setSelected(node.parentId);
+          } else {
+            if (node && node.children.length > 0 && !node.collapsed) {
+              store.setSelected(node.children[0]);
+            }
           }
           break;
         }
-        case 'ArrowRight': {
+        case 'ArrowRight':
+        case 'l': {
           e.preventDefault();
           const node = nodes[selectedId];
-          if (node?.parentId) store.setSelected(node.parentId);
+          // Right always means "towards children" for right-side nodes,
+          // "towards parent" for left-side nodes — i.e. visually rightward.
+          const goToChildren = node && node.x >= 0;
+          if (goToChildren) {
+            if (node.children.length > 0 && !node.collapsed) {
+              store.setSelected(node.children[0]);
+            }
+          } else {
+            if (node?.parentId) store.setSelected(node.parentId);
+          }
           break;
         }
-        case 'ArrowUp': {
+        case 'ArrowUp':
+        case 'k': {
           e.preventDefault();
           const siblings = getSiblings(nodes, selectedId);
           const idx = siblings.indexOf(selectedId);
           if (idx > 0) store.setSelected(siblings[idx - 1]);
           break;
         }
-        case 'ArrowDown': {
+        case 'ArrowDown':
+        case 'j': {
           e.preventDefault();
           const siblings = getSiblings(nodes, selectedId);
           const idx = siblings.indexOf(selectedId);
