@@ -129,12 +129,18 @@ export function useKeyboard() {
           }
           break;
         }
+        case 'd':
         case 'Delete':
         case 'Backspace': {
           if (selectedId !== rootId) {
             e.preventDefault();
             store.deleteNode(selectedId);
           }
+          break;
+        }
+        case 'i': {
+          e.preventDefault();
+          store.setEditing(selectedId);
           break;
         }
         case 'Escape': {
