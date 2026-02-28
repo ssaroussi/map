@@ -21,7 +21,7 @@ export function BezierConnection({ id, x1, y1, x2, y2, gradientId }: Props) {
       opacity={0.7}
       initial={{ pathLength: 0, opacity: 0 }}
       animate={{ pathLength: 1, opacity: 0.7 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     />
   );
 }

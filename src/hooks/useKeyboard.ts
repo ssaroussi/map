@@ -111,15 +111,15 @@ export function useKeyboard() {
         case 'ArrowLeft': {
           e.preventDefault();
           const node = nodes[selectedId];
-          if (node?.parentId) store.setSelected(node.parentId);
+          if (node && node.children.length > 0 && !node.collapsed) {
+            store.setSelected(node.children[0]);
+          }
           break;
         }
         case 'ArrowRight': {
           e.preventDefault();
           const node = nodes[selectedId];
-          if (node && node.children.length > 0 && !node.collapsed) {
-            store.setSelected(node.children[0]);
-          }
+          if (node?.parentId) store.setSelected(node.parentId);
           break;
         }
         case 'ArrowUp': {

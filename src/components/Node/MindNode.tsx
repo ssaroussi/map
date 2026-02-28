@@ -79,18 +79,22 @@ export function MindNode({ nodeId, isRoot }: Props) {
     setContextMenu({ x: e.clientX, y: e.clientY, nodeId });
   }, [nodeId, setSelected, setContextMenu]);
 
+  const defaultShadow = isRoot
+    ? `0 4px 20px ${node.color}40`
+    : `0 2px 8px rgba(0,0,0,0.2)`;
+
   const glowStyle = isSelected
-    ? { boxShadow: `0 0 0 2px ${node.color}, 0 0 24px ${node.color}55` }
-    : {};
+    ? { boxShadow: `0 0 0 2px ${node.color}, 0 0 24px ${node.color}80` }
+    : { boxShadow: defaultShadow };
 
   return (
     <motion.div
-      layout
-      layoutId={nodeId}
       data-node="true"
       initial={{ scale: 0.7, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
+      animate={{ scale: 1, opacity: 1, ...glowStyle }}
       exit={{ scale: 0.5, opacity: 0 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       style={{
         position: 'absolute',
@@ -109,10 +113,9 @@ export function MindNode({ nodeId, isRoot }: Props) {
         color: '#e8e8f0',
         fontSize: isRoot ? '15px' : '13px',
         fontWeight: isRoot ? 700 : 500,
-        cursor: isEditing ? 'text' : 'grab',
+        cursor: isEditing ? 'text' : 'pointer',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        ...glowStyle,
         padding: '0 12px',
         textAlign: 'center',
         overflow: 'visible',
@@ -131,6 +134,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
           whiteSpace: 'nowrap',
           maxWidth: '100%',
           color: isRoot ? node.color : '#e8e8f0',
+          transition: 'color 0.2s ease',
         }}>
           {node.title || (isRoot ? 'Central Topic' : 'New Node')}
         </span>

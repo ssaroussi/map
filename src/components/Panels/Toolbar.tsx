@@ -7,6 +7,7 @@ export function Toolbar() {
   const exportJSON = useMapStore(s => s.exportJSON);
   const importJSON = useMapStore(s => s.importJSON);
   const fitToScreen = useMapStore(s => s.fitToScreen);
+  const resetLayout = useMapStore(s => s.resetLayout);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const undo = () => (useTemporalStore.getState() as any).undo();
@@ -46,11 +47,23 @@ export function Toolbar() {
         padding: '5px 11px',
         cursor: 'pointer',
         fontFamily: 'inherit',
-        transition: 'background 0.15s',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         whiteSpace: 'nowrap',
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.12)';
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
+      onMouseDown={e => {
+        e.currentTarget.style.transform = 'scale(0.95)';
+      }}
+      onMouseUp={e => {
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
     >
       {label}
     </button>
@@ -91,6 +104,33 @@ export function Toolbar() {
         setViewport({ scale: s });
       })}
       {btn('Fit', () => fitToScreen(window.innerWidth, window.innerHeight), 'Fit to screen')}
+      <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.12)' }} />
+      <button
+        onClick={resetLayout}
+        title="Re-layout all nodes evenly"
+        style={{
+          background: 'linear-gradient(135deg, rgba(124,92,252,0.25), rgba(0,180,216,0.25))',
+          border: '1px solid rgba(124,92,252,0.4)',
+          borderRadius: 7,
+          color: '#c4b0ff',
+          fontSize: 12,
+          padding: '5px 11px',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          transition: 'background 0.15s, border-color 0.15s',
+          whiteSpace: 'nowrap',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(124,92,252,0.45), rgba(0,180,216,0.45))';
+          e.currentTarget.style.borderColor = 'rgba(124,92,252,0.8)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(124,92,252,0.25), rgba(0,180,216,0.25))';
+          e.currentTarget.style.borderColor = 'rgba(124,92,252,0.4)';
+        }}
+      >
+        ✦ Magic
+      </button>
       <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.12)' }} />
       {btn('Export JSON', handleExport)}
       <button

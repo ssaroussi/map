@@ -10,13 +10,16 @@ export function CollapseHandle({ nodeId, color }: Props) {
   const node = useMapStore(s => s.nodes[nodeId]);
   if (!node || node.children.length === 0) return null;
 
+  // Place the handle on the side where children extend
+  const onRight = node.x >= 0;
+
   return (
     <button
       data-node
       onClick={(e) => { e.stopPropagation(); toggleCollapse(nodeId); }}
       style={{
         position: 'absolute',
-        right: '-12px',
+        ...(onRight ? { right: '-12px' } : { left: '-12px' }),
         top: '50%',
         transform: 'translateY(-50%)',
         width: '16px',

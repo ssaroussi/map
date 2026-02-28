@@ -46,6 +46,7 @@ interface MapActions {
   importJSON: (json: string) => void;
   fitToScreen: (width: number, height: number) => void;
   panToNode: (nodeId: string) => void;
+  resetLayout: () => void;
 }
 
 type FullStore = MapState & MapActions;
@@ -245,17 +246,52 @@ export const useMapStore = create<FullStore>()(
           }
         },
 
+        resetLayout: () => {
+          set((state) => {
+            for (const node of Object.values(state.nodes)) {
+              node.manuallyPositioned = false;
+            }
+            computeLayout(state.nodes, state.rootId);
+          });
+          setTimeout(() => get().fitToScreen(window.innerWidth, window.innerHeight), 50);
+        },
+
         panToNode: (nodeId: string) => {
           const state = get();
           const node = state.nodes[nodeId];
           if (!node) return;
-          const { scale } = state.viewport;
+          const { scale, x: vx, y: vy } = state.viewport;
           const w = window.innerWidth;
           const h = window.innerHeight;
-          set((s) => {
-            s.viewport.x = w / 2 - node.x * scale;
-            s.viewport.y = h / 2 - node.y * scale;
-          });
+          const margin = 80;
+          // Convert node canvas coords to screen coords
+          const screenX = node.x * scale + vx;
+          const screenY = node.y * scale + vy;
+          const hw = 100 * scale; // approx half node width
+          const hh = 30 * scale;  // approx half node height
+          const outOfBounds =
+            screenX - hw < margin ||
+            screenX + hw > w - margin ||
+            screenY - hh < margin ||
+            screenY + hh > h - margin;
+          if (!outOfBounds) return;
+          const targetX = w / 2 - node.x * scale;
+          const targetY = h / 2 - node.y * scale;
+          const startX = vx;
+          const startY = vy;
+          const duration = 350;
+          const startTime = performance.now();
+          const ease = (t: number) => 1 - Math.pow(1 - t, 3); // ease-out cubic
+          const animate = (now: number) => {
+            const t = Math.min((now - startTime) / duration, 1);
+            const e = ease(t);
+            set((s) => {
+              s.viewport.x = startX + (targetX - startX) * e;
+              s.viewport.y = startY + (targetY - startY) * e;
+            });
+            if (t < 1) requestAnimationFrame(animate);
+          };
+          requestAnimationFrame(animate);
         },
 
         fitToScreen: (width: number, height: number) => {

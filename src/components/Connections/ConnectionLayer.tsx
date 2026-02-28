@@ -6,6 +6,7 @@ export function ConnectionLayer() {
 
   const connections: Array<{ id: string; from: string; to: string }> = [];
   for (const node of Object.values(nodes)) {
+    if (node.collapsed) continue;
     for (const childId of node.children) {
       connections.push({ id: `${node.id}-${childId}`, from: node.id, to: childId });
     }

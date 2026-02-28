@@ -33,17 +33,22 @@ export function useCanvasGestures() {
   }, []);
 
   const onWheel = useCallback((e: React.WheelEvent) => {
-    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     const { scale, x, y } = useMapStore.getState().viewport;
-    const delta = -e.deltaY * 0.001;
-    const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
-    const newX = cx - (cx - x) * (newScale / scale);
-    const newY = cy - (cy - y) * (newScale / scale);
-    setViewport({ scale: newScale, x: newX, y: newY });
+    if (e.ctrlKey || e.metaKey) {
+      // Pinch-to-zoom or Ctrl+scroll → zoom
+      const delta = -e.deltaY * 0.005;
+      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * (1 + delta)));
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      const newX = cx - (cx - x) * (newScale / scale);
+      const newY = cy - (cy - y) * (newScale / scale);
+      setViewport({ scale: newScale, x: newX, y: newY });
+    } else {
+      // Two-finger trackpad swipe → pan
+      setViewport({ x: x - e.deltaX, y: y - e.deltaY });
+    }
   }, [setViewport]);
 
   const onCanvasClick = useCallback((e: React.MouseEvent) => {
