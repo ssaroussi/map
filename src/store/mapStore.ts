@@ -371,10 +371,10 @@ export const useMapStore = create<FullStore>()(
       },
     })),
     {
+      // Only track node/tree changes for undo — viewport is view-only state
       partialize: (state) => ({
         nodes: state.nodes,
         rootId: state.rootId,
-        viewport: state.viewport,
       }),
     }
   )
