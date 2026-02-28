@@ -46,6 +46,25 @@ export function useKeyboard() {
           (useTemporalStore.getState() as any).redo();
           return;
         }
+        if (e.key === 's') {
+          e.preventDefault();
+          if (e.shiftKey) {
+            store.saveMapAs();
+          } else {
+            store.saveMap();
+          }
+          return;
+        }
+        if (e.key === 'o') {
+          e.preventDefault();
+          store.openMap();
+          return;
+        }
+        if (e.key === 'n') {
+          e.preventDefault();
+          store.newMap();
+          return;
+        }
       }
 
       if (!selectedId) {
