@@ -47,37 +47,8 @@ export function useKeyboard() {
 
       if (isInput) return;
 
-      if (e.ctrlKey || e.metaKey) {
-        if (e.key === 'z') {
-          e.preventDefault();
-          (useTemporalStore.getState() as any).undo();
-          return;
-        }
-        if (e.key === 'y') {
-          e.preventDefault();
-          (useTemporalStore.getState() as any).redo();
-          return;
-        }
-        if (e.key === 's') {
-          e.preventDefault();
-          if (e.shiftKey) {
-            store.saveMapAs();
-          } else {
-            store.saveMap();
-          }
-          return;
-        }
-        if (e.key === 'o') {
-          e.preventDefault();
-          store.openMap();
-          return;
-        }
-        if (e.key === 'n') {
-          e.preventDefault();
-          store.newMap();
-          return;
-        }
-      }
+      // Cmd/Ctrl shortcuts are handled by the native OS menu (useNativeMenu)
+      if (e.ctrlKey || e.metaKey) return;
 
       if (!selectedId) {
         const navKeys = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','h','j','k','l','Enter',' ','Tab'];
