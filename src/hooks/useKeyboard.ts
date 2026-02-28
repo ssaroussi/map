@@ -14,6 +14,12 @@ export function useKeyboard() {
       // Track last selected node so Escape + navigate resumes from it
       if (selectedId) lastSelectedId = selectedId;
 
+      // Navigate to a node: select it and smoothly pan into view if needed
+      const navigateTo = (id: string) => {
+        store.setSelected(id);
+        store.panToNode(id);
+      };
+
       // Always allow typing in inputs/textareas
       const target = e.target as HTMLElement;
       const isInput = target.tagName === 'TEXTAREA' || target.tagName === 'INPUT';
@@ -78,7 +84,7 @@ export function useKeyboard() {
         if (navKeys.includes(e.key)) {
           e.preventDefault();
           const resumeId = lastSelectedId && nodes[lastSelectedId] ? lastSelectedId : rootId;
-          store.setSelected(resumeId);
+          navigateTo(resumeId);
         }
         return;
       }
@@ -143,21 +149,19 @@ export function useKeyboard() {
           const goToParent = node && node.x >= 0;
           if (goToParent) {
             if (node.parentId) {
-              store.setSelected(node.parentId);
+              navigateTo(node.parentId);
             } else {
-              // Already at root — move up visually
               const siblings = getSiblings(nodes, selectedId);
               const idx = siblings.indexOf(selectedId);
-              if (idx > 0) store.setSelected(siblings[idx - 1]);
+              if (idx > 0) navigateTo(siblings[idx - 1]);
             }
           } else {
             if (node && node.children.length > 0 && !node.collapsed) {
-              store.setSelected(node.children[0]);
+              navigateTo(node.children[0]);
             } else {
-              // Dead end — move up visually
               const siblings = getSiblings(nodes, selectedId);
               const idx = siblings.indexOf(selectedId);
-              if (idx > 0) store.setSelected(siblings[idx - 1]);
+              if (idx > 0) navigateTo(siblings[idx - 1]);
             }
           }
           break;
@@ -169,21 +173,19 @@ export function useKeyboard() {
           const goToChildren = node && node.x >= 0;
           if (goToChildren) {
             if (node.children.length > 0 && !node.collapsed) {
-              store.setSelected(node.children[0]);
+              navigateTo(node.children[0]);
             } else {
-              // Dead end — move down visually
               const siblings = getSiblings(nodes, selectedId);
               const idx = siblings.indexOf(selectedId);
-              if (idx < siblings.length - 1) store.setSelected(siblings[idx + 1]);
+              if (idx < siblings.length - 1) navigateTo(siblings[idx + 1]);
             }
           } else {
             if (node?.parentId) {
-              store.setSelected(node.parentId);
+              navigateTo(node.parentId);
             } else {
-              // Dead end — move down visually
               const siblings = getSiblings(nodes, selectedId);
               const idx = siblings.indexOf(selectedId);
-              if (idx < siblings.length - 1) store.setSelected(siblings[idx + 1]);
+              if (idx < siblings.length - 1) navigateTo(siblings[idx + 1]);
             }
           }
           break;
@@ -193,7 +195,7 @@ export function useKeyboard() {
           e.preventDefault();
           const siblings = getSiblings(nodes, selectedId);
           const idx = siblings.indexOf(selectedId);
-          if (idx > 0) store.setSelected(siblings[idx - 1]);
+          if (idx > 0) navigateTo(siblings[idx - 1]);
           break;
         }
         case 'ArrowDown':
@@ -201,7 +203,7 @@ export function useKeyboard() {
           e.preventDefault();
           const siblings = getSiblings(nodes, selectedId);
           const idx = siblings.indexOf(selectedId);
-          if (idx < siblings.length - 1) store.setSelected(siblings[idx + 1]);
+          if (idx < siblings.length - 1) navigateTo(siblings[idx + 1]);
           break;
         }
       }
