@@ -1,4 +1,5 @@
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -14,7 +15,6 @@ pub fn run() {
         )?;
       }
 
-      use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
       let file_menu = Submenu::with_items(
         app,
@@ -60,11 +60,28 @@ pub fn run() {
         ],
       )?;
 
-      let menu = Menu::with_items(app, &[&file_menu, &edit_menu, &view_menu])?;
+      let help_menu = Submenu::with_items(
+        app,
+        "Help",
+        true,
+        &[
+          &MenuItem::with_id(app, "about", "About Map…", true, None::<&str>)?,
+        ],
+      )?;
+
+      let menu = Menu::with_items(app, &[&file_menu, &edit_menu, &view_menu, &help_menu])?;
       app.set_menu(menu)?;
 
       app.on_menu_event(|app, event| {
         app.emit("menu-event", event.id().as_ref()).unwrap();
+      });
+
+      // Intercept window close — let the frontend decide whether to save first
+      let win = app.get_webview_window("main").unwrap();
+      win.on_close_requested(|event| {
+        event.prevent_close();
+        // Signal the frontend; it will call window.__TAURI_CLOSE_CONFIRMED__ when ready
+        let _ = event.window().emit("close-requested", ());
       });
 
       Ok(())
