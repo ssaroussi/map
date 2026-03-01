@@ -75,6 +75,18 @@ export async function showSavePngDialog(defaultName = 'export.png'): Promise<str
   return result ?? null;
 }
 
+/** Opens a native save dialog for Markdown and returns the chosen path, or null if cancelled. */
+export async function showSaveMarkdownDialog(defaultName = 'export.md'): Promise<string | null> {
+  if (!isTauri()) return null;
+  const { save } = await import('@tauri-apps/plugin-dialog');
+  const result = await save({
+    title: 'Export as Markdown',
+    defaultPath: defaultName,
+    filters: [{ name: 'Markdown', extensions: ['md'] }],
+  });
+  return result ?? null;
+}
+
 export async function writeBinaryFile(path: string, data: Uint8Array): Promise<void> {
   const { writeFile } = await import('@tauri-apps/plugin-fs');
   await writeFile(path, data);

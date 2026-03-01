@@ -27,7 +27,7 @@ pub fn run() {
         "File",
         true,
         &[
-          &MenuItem::with_id(app, "new", "New", true, Some("CmdOrCtrl+N"))?,
+          &MenuItem::with_id(app, "new", "New", true, None::<&str>)?,
           &MenuItem::with_id(app, "open", "Open…", true, Some("CmdOrCtrl+O"))?,
           &PredefinedMenuItem::separator(app)?,
           &MenuItem::with_id(app, "save", "Save", true, Some("CmdOrCtrl+S"))?,
@@ -40,6 +40,7 @@ pub fn run() {
           )?,
           &PredefinedMenuItem::separator(app)?,
           &MenuItem::with_id(app, "export_png", "Export as PNG…", true, None::<&str>)?,
+          &MenuItem::with_id(app, "export_md", "Export as Markdown…", true, None::<&str>)?,
           &PredefinedMenuItem::separator(app)?,
           &MenuItem::with_id(app, "close_window", "Close Window", true, Some("CmdOrCtrl+W"))?,
         ],

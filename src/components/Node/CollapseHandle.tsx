@@ -3,9 +3,10 @@ import { useMapStore } from '../../store/mapStore';
 interface Props {
   nodeId: string;
   color: string;
+  visible: boolean;
 }
 
-export function CollapseHandle({ nodeId, color }: Props) {
+export function CollapseHandle({ nodeId, color, visible }: Props) {
   const toggleCollapse = useMapStore(s => s.toggleCollapse);
   const node = useMapStore(s => s.nodes[nodeId]);
   if (!node || node.children.length === 0) return null;
@@ -37,6 +38,9 @@ export function CollapseHandle({ nodeId, color }: Props) {
         lineHeight: 1,
         zIndex: 10,
         padding: 0,
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.15s ease',
+        pointerEvents: visible ? 'auto' : 'none',
       }}
     >
       {node.collapsed ? '+' : '−'}

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useMapStore, useTemporalStore } from '../../store/mapStore';
 import { getFileName } from '../../store/fileManager';
+import { confirmIfUnsaved } from '../../utils/confirmUnsaved';
 
 export function Toolbar() {
   const setViewport = useMapStore(s => s.setViewport);
@@ -93,7 +94,7 @@ export function Toolbar() {
 
       {divider()}
 
-      {btn('New', newMap, 'New map')}
+      {btn('New', () => confirmIfUnsaved(newMap), 'New map')}
 
       {/* Open with recent dropdown */}
       <div style={{ position: 'relative' }}>
@@ -132,7 +133,7 @@ export function Toolbar() {
             zIndex: 200,
           }}>
             <button
-              onClick={() => { openMap(); setShowRecent(false); }}
+              onClick={() => { confirmIfUnsaved(() => { openMap(); setShowRecent(false); }); }}
               style={{
                 display: 'block', width: '100%', textAlign: 'left',
                 background: 'none', border: 'none', color: 'var(--t-text)',
@@ -149,7 +150,7 @@ export function Toolbar() {
             {recentFiles.map(path => (
               <button
                 key={path}
-                onClick={() => { openMapFromPath(path); setShowRecent(false); }}
+                onClick={() => { confirmIfUnsaved(() => { openMapFromPath(path); setShowRecent(false); }); }}
                 style={{
                   display: 'block', width: '100%', textAlign: 'left',
                   background: 'none', border: 'none', color: 'var(--t-text-muted)',

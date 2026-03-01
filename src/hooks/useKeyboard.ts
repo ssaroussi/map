@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
-import { getSiblings, getNextNode, getPrevNode, getVisualTarget } from '../algorithms/treeUtils';
+import { getSiblings, getNextNode, getPrevNode, getVisualTarget, getAllDescendants } from '../algorithms/treeUtils';
+import { confirmDelete } from '../utils/confirmUnsaved';
 
 // Persists across renders — tracks the last node that was selected
 let lastSelectedId: string | null = null;
@@ -9,7 +10,7 @@ export function useKeyboard() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const store = useMapStore.getState();
-      const { selectedId, editingId, labelEditingId, nodes, rootId } = store;
+      const { selectedId, editingId, labelEditingId, notesPanelNodeId, nodes, rootId } = store;
 
       // Track last selected node so Escape + navigate resumes from it
       if (selectedId) lastSelectedId = selectedId;
@@ -45,7 +46,37 @@ export function useKeyboard() {
         return;
       }
 
+      // Notes panel mode: only Escape is handled; everything else is blocked
+      // (the focused textarea captures typing naturally via the isInput check below,
+      //  but this guard covers the case where focus drifts away from the textarea)
+      if (notesPanelNodeId) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          store.setNotesPanel(null);
+        }
+        return;
+      }
+
       if (isInput) return;
+
+      // Cmd/Ctrl+L: open label editor
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+        if (selectedId) {
+          e.preventDefault();
+          store.setLabelEditing(selectedId);
+        }
+        return;
+      }
+
+      // Cmd/Ctrl+N: toggle notes panel
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        if (selectedId) {
+          e.preventDefault();
+          const current = store.notesPanelNodeId;
+          store.setNotesPanel(current === selectedId ? null : selectedId);
+        }
+        return;
+      }
 
       // Cmd/Ctrl shortcuts are handled by the native OS menu (useNativeMenu)
       if (e.ctrlKey || e.metaKey) return;
@@ -105,9 +136,13 @@ export function useKeyboard() {
         case 'Backspace': {
           if (selectedId !== rootId) {
             e.preventDefault();
+            const node = nodes[selectedId];
+            const descendantCount = getAllDescendants(nodes, selectedId).length;
             const prev = getPrevNode(nodes, selectedId);
-            store.deleteNode(selectedId);
-            if (prev && prev !== selectedId) navigateTo(prev);
+            confirmDelete(node?.title || 'Node', descendantCount, () => {
+              store.deleteNode(selectedId);
+              if (prev && prev !== selectedId) navigateTo(prev);
+            });
           }
           break;
         }

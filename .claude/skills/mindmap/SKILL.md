@@ -23,9 +23,9 @@ You are generating or editing a `.map` file for the **map** desktop app (Tauri +
 ```typescript
 {
   id: string;           // unique, uuidv4-style
-  title: string;        // display text
-  label: string;        // small tag shown below title (can be "")
-  description: string;  // notes panel content (can be "")
+  title: string;        // display text shown on the node
+  label: string;        // small tag badge shown below the title (use "" if none)
+  description: string;  // multi-line notes shown in the notes panel (use "" if none)
   children: string[];   // ordered child IDs
   parentId: string | null; // null for root only
   x: number; y: number; // canvas center position
@@ -35,6 +35,11 @@ You are generating or editing a `.map` file for the **map** desktop app (Tauri +
 }
 ```
 
+## label vs description
+
+- **label** — a short tag (1–3 words) that appears as a pill badge below the node title on the canvas. Use it for status, type, or category (e.g. `"done"`, `"API"`, `"v2"`).
+- **description** — free-form notes (multi-line text) shown in the notes side panel when the user presses F4 or Cmd+N. Nodes with notes show a sketchy pen-stroke background on the canvas as a visual indicator. Use it for context, details, or explanation.
+
 ## Layout conventions
 
 - Root node: `(0, 0)`
@@ -42,6 +47,18 @@ You are generating or editing a `.map` file for the **map** desktop app (Tauri +
 - Depth 2+: each level adds `x += 200`; children stack vertically centered on parent
 - Colors for depth-1 branches (cycle): `["#7c5cfc","#fc5c7d","#43e97b","#fa8231","#00b4d8","#f7d794"]`
 - All descendants of a depth-1 node share its color
+
+## Markdown export format
+
+The app can export a map to Markdown (File → Export as Markdown…). Understanding this helps you generate maps that produce clean docs:
+
+- Root → `# Title`
+- Depth 1 → `## Title`
+- Depth 2 → `### Title`
+- Depth 3 → `#### Title`
+- Depth 4+ → nested bullet list (`- **Title**`)
+- Labels appear inline as backtick code: `# Title \`label\``
+- Notes (description) appear as a paragraph directly under their heading or indented under their list item
 
 ## CLI tool (preferred for edits)
 
@@ -54,7 +71,7 @@ npx ts-node .claude/skills/mindmap/map-cli.ts <command> <file> [...args]
 Commands:
 | Command | Args | Description |
 |---------|------|-------------|
-| `read` | `<file>` | Print tree summary |
+| `read` | `<file>` | Print tree summary with IDs, labels, and note presence |
 | `write` | `<file> <json-string>` | Overwrite full map |
 | `add-node` | `<file> <parentId> <title>` | Add a child node |
 | `set-title` | `<file> <nodeId> <title>` | Rename a node |

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMapStore } from '../../store/mapStore';
 
@@ -8,6 +9,15 @@ export function NotesPanel() {
   const setNotesPanel = useMapStore(s => s.setNotesPanel);
 
   const node = nodeId ? nodes[nodeId] : null;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-focus textarea whenever the panel opens for a node
+  useEffect(() => {
+    if (nodeId) {
+      // Wait one frame for the slide-in animation to start, then focus
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+  }, [nodeId]);
 
   return (
     <AnimatePresence>
@@ -31,17 +41,20 @@ export function NotesPanel() {
             padding: '20px',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ color: 'var(--t-text)', fontWeight: 600, fontSize: 15 }}>Notes</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+            <span style={{ color: 'var(--t-text)', fontWeight: 600, fontSize: 15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 240 }}>
+              {node.title || 'Untitled'}
+            </span>
             <button
               onClick={() => setNotesPanel(null)}
-              style={{ background: 'none', border: 'none', color: 'var(--t-text-muted)', cursor: 'pointer', fontSize: 18 }}
+              style={{ background: 'none', border: 'none', color: 'var(--t-text-muted)', cursor: 'pointer', fontSize: 18, flexShrink: 0 }}
             >×</button>
           </div>
-          <div style={{ color: node.color, fontSize: 13, marginBottom: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {node.title || 'Untitled'}
+          <div style={{ color: node.color, fontSize: 11, marginBottom: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Notes
           </div>
           <textarea
+            ref={textareaRef}
             value={node.description}
             onChange={(e) => updateDescription(nodeId!, e.target.value)}
             placeholder="Add notes..."

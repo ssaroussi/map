@@ -1,9 +1,10 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMapStore } from '../../store/mapStore';
 import { NodeEditor } from './NodeEditor';
 import { NodeLabel } from './NodeLabel';
 import { CollapseHandle } from './CollapseHandle';
+import { NotesIndicator } from './NotesIndicator';
 import { NODE_WIDTH, NODE_HEIGHT } from '../../constants/layout';
 
 interface Props {
@@ -21,6 +22,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
   const moveNode = useMapStore(s => s.moveNode);
   const viewport = useMapStore(s => s.viewport);
 
+  const [isHovered, setIsHovered] = useState(false);
   const dragStart = useRef<{ mx: number; my: number; nx: number; ny: number } | null>(null);
   const hasDragged = useRef(false);
 
@@ -108,11 +110,13 @@ export function MindNode({ nodeId, isRoot }: Props) {
         padding: '0 12px',
         textAlign: 'center',
         overflow: 'visible',
-        zIndex: isSelected ? 10 : 1,
+        zIndex: isHovered ? 50 : isSelected ? 10 : 1,
       }}
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {isEditing ? (
         <NodeEditor nodeId={nodeId} />
@@ -129,7 +133,8 @@ export function MindNode({ nodeId, isRoot }: Props) {
         </span>
       )}
       <NodeLabel label={node.label} color={node.color} />
-      {!isRoot && <CollapseHandle nodeId={nodeId} color={node.color} />}
+      <NotesIndicator description={node.description} color={node.color} width={width} height={height} hovered={isHovered} />
+      {!isRoot && <CollapseHandle nodeId={nodeId} color={node.color} visible={isHovered || node.collapsed} />}
     </motion.div>
   );
 }
