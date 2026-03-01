@@ -50,20 +50,24 @@ export function useNativeMenu() {
         }
       });
 
-      // Close-requested: ask to save if dirty
+      // Close-requested: ask to save if dirty, then exit via Rust command
       unlistenClose = await listen('close-requested', async () => {
         const { isDirty, saveMap } = useMapStore.getState();
+        const { invoke } = await import('@tauri-apps/api/core');
+
         if (isDirty) {
           const { ask } = await import('@tauri-apps/plugin-dialog');
-          const save = await ask('You have unsaved changes. Save before closing?', {
-            title: 'Unsaved Changes',
-            kind: 'warning',
-            okLabel: 'Save',
-            cancelLabel: 'Discard',
-          });
-          if (save) await saveMap();
+          // ask() returns true = OK button, false = Cancel button
+          const shouldSave = await ask(
+            'You have unsaved changes. Save before closing?',
+            { title: 'Unsaved Changes', okLabel: 'Save', cancelLabel: 'Discard' }
+          );
+          if (shouldSave === null) return; // native cancel (e.g. Esc) — do not close
+          if (shouldSave) await saveMap();
         }
-        getCurrentWindow().destroy();
+
+        // app.exit(0) via Rust — the only reliable way to close after prevent_close
+        invoke('close_app');
       });
 
       // Keep window title in sync with current file + dirty state
