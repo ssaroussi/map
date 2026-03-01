@@ -52,21 +52,23 @@ export function useNativeMenu() {
 
       // Close-requested: ask to save if dirty, then exit via Rust command
       unlistenClose = await listen('close-requested', async () => {
-        const { isDirty, saveMap } = useMapStore.getState();
         const { invoke } = await import('@tauri-apps/api/core');
+        const { isDirty, currentFilePath, saveMap } = useMapStore.getState();
+        const hasUnsavedWork = isDirty || !currentFilePath;
 
-        if (isDirty) {
+        if (hasUnsavedWork) {
           const { ask } = await import('@tauri-apps/plugin-dialog');
-          // ask() returns true = OK button, false = Cancel button
           const shouldSave = await ask(
             'You have unsaved changes. Save before closing?',
-            { title: 'Unsaved Changes', okLabel: 'Save', cancelLabel: 'Discard' }
+            { title: 'Unsaved Changes', okLabel: 'Save', cancelLabel: "Don't Save" }
           );
-          if (shouldSave === null) return; // native cancel (e.g. Esc) — do not close
-          if (shouldSave) await saveMap();
+          if (shouldSave) {
+            await saveMap();
+            // If the file-picker was cancelled, isDirty is still true — abort close
+            if (useMapStore.getState().isDirty) return;
+          }
         }
 
-        // app.exit(0) via Rust — the only reliable way to close after prevent_close
         invoke('close_app');
       });
 
