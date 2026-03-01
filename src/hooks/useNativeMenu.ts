@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
+import { useThemeStore } from '../store/themeStore';
 import { exportToPng } from '../utils/exportImage';
 
 const isTauri = () => typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
@@ -46,10 +47,9 @@ export function useNativeMenu() {
             break;
           case 'theme_default':
           case 'theme_hacker': {
-            const { useThemeStore } = await import('../store/themeStore');
             const id = payload.replace('theme_', '') as 'default' | 'hacker';
             useThemeStore.getState().setTheme(id);
-            setTimeout(() => useMapStore.getState().recolorNodes(), 0);
+            setTimeout(() => store.recolorNodes(), 0);
             break;
           }
           case 'close_window':
