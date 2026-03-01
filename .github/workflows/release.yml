@@ -17,7 +17,7 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
             label: macOS (Apple Silicon)
-          - os: macos-13-large
+          - os: macos-13
             target: x86_64-apple-darwin
             label: macOS (Intel)
           - os: windows-latest
@@ -80,6 +80,7 @@ jobs:
   publish:
     name: Publish Release
     needs: build
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts

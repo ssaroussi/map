@@ -1,5 +1,6 @@
 use tauri::{Emitter, Manager};
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
+use tauri::WindowEvent;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -78,10 +79,12 @@ pub fn run() {
 
       // Intercept window close — let the frontend decide whether to save first
       let win = app.get_webview_window("main").unwrap();
-      win.on_close_requested(|event| {
-        event.prevent_close();
-        // Signal the frontend; it will call window.__TAURI_CLOSE_CONFIRMED__ when ready
-        let _ = event.window().emit("close-requested", ());
+      let win_clone = win.clone();
+      win.on_window_event(move |event| {
+        if let WindowEvent::CloseRequested { api, .. } = event {
+          api.prevent_close();
+          let _ = win_clone.emit("close-requested", ());
+        }
       });
 
       Ok(())
