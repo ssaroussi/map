@@ -105,8 +105,6 @@ export function MindNode({ nodeId, isRoot }: Props) {
         fontSize: isRoot ? '15px' : '13px',
         fontWeight: isRoot ? 700 : 500,
         cursor: isEditing ? 'text' : 'pointer',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
         padding: '0 12px',
         textAlign: 'center',
         overflow: 'visible',

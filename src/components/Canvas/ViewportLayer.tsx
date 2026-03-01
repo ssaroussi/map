@@ -13,7 +13,6 @@ export function ViewportLayer({ children }: Props) {
         left: 0, top: 0,
         transform: `translate(${x}px, ${y}px) scale(${scale})`,
         transformOrigin: '0 0',
-        willChange: 'transform',
       }}
     >
       {children}
