@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Map",
   "version": "0.1.0",
-  "identifier": "com.map.app",
+  "identifier": "com.amitsaroussi.map",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",

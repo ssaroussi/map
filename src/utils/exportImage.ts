@@ -1,5 +1,6 @@
 import { toPng } from 'html-to-image';
 import { useMapStore } from '../store/mapStore';
+import { showSavePngDialog, writeBinaryFile } from '../store/fileManager';
 
 let canvasEl: HTMLElement | null = null;
 
@@ -42,7 +43,6 @@ export async function exportToPng(): Promise<void> {
       bytes[i] = binary.charCodeAt(i);
     }
 
-    const { showSavePngDialog, writeBinaryFile } = await import('../store/fileManager');
     const path = await showSavePngDialog('export.png');
     if (!path) return;
 
