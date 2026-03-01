@@ -32,6 +32,8 @@ pub fn run() {
             true,
             Some("CmdOrCtrl+Shift+S"),
           )?,
+          &PredefinedMenuItem::separator(app)?,
+          &MenuItem::with_id(app, "export_png", "Export as PNG…", true, None::<&str>)?,
         ],
       )?;
 

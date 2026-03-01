@@ -1,0 +1,338 @@
+{
+  "nodes": {
+    "root": {
+      "id": "root",
+      "title": "React Hooks",
+      "label": "",
+      "description": "",
+      "children": [
+        "branch-state",
+        "branch-effects",
+        "branch-context",
+        "branch-performance",
+        "branch-refs",
+        "branch-custom"
+      ],
+      "parentId": null,
+      "x": 0,
+      "y": 0,
+      "color": "#ffffff",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-state": {
+      "id": "branch-state",
+      "title": "State",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-usestate",
+        "node-usereducer"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": -756,
+      "color": "#7c5cfc",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usestate": {
+      "id": "node-usestate",
+      "title": "useState",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-state",
+      "x": 480,
+      "y": -810,
+      "color": "#7c5cfc",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usereducer": {
+      "id": "node-usereducer",
+      "title": "useReducer",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-state",
+      "x": 480,
+      "y": -702,
+      "color": "#7c5cfc",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-effects": {
+      "id": "branch-effects",
+      "title": "Effects",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-useeffect",
+        "node-uselayouteffect",
+        "node-useinsertioneffect"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": -486,
+      "color": "#fc5c7d",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-useeffect": {
+      "id": "node-useeffect",
+      "title": "useEffect",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-effects",
+      "x": 480,
+      "y": -594,
+      "color": "#fc5c7d",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-uselayouteffect": {
+      "id": "node-uselayouteffect",
+      "title": "useLayoutEffect",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-effects",
+      "x": 480,
+      "y": -486,
+      "color": "#fc5c7d",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-useinsertioneffect": {
+      "id": "node-useinsertioneffect",
+      "title": "useInsertionEffect",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-effects",
+      "x": 480,
+      "y": -378,
+      "color": "#fc5c7d",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-context": {
+      "id": "branch-context",
+      "title": "Context",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-usecontext",
+        "node-createcontext"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": -216,
+      "color": "#43e97b",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usecontext": {
+      "id": "node-usecontext",
+      "title": "useContext",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-context",
+      "x": 480,
+      "y": -270,
+      "color": "#43e97b",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-createcontext": {
+      "id": "node-createcontext",
+      "title": "createContext",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-context",
+      "x": 480,
+      "y": -162,
+      "color": "#43e97b",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-performance": {
+      "id": "branch-performance",
+      "title": "Performance",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-usememo",
+        "node-usecallback",
+        "node-usetransition",
+        "node-usedeferredvalue"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": 108,
+      "color": "#fa8231",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usememo": {
+      "id": "node-usememo",
+      "title": "useMemo",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-performance",
+      "x": 480,
+      "y": -54,
+      "color": "#fa8231",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usecallback": {
+      "id": "node-usecallback",
+      "title": "useCallback",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-performance",
+      "x": 480,
+      "y": 54,
+      "color": "#fa8231",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usetransition": {
+      "id": "node-usetransition",
+      "title": "useTransition",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-performance",
+      "x": 480,
+      "y": 162,
+      "color": "#fa8231",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usedeferredvalue": {
+      "id": "node-usedeferredvalue",
+      "title": "useDeferredValue",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-performance",
+      "x": 480,
+      "y": 270,
+      "color": "#fa8231",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-refs": {
+      "id": "branch-refs",
+      "title": "Refs",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-useref",
+        "node-useimperativehandle"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": 432,
+      "color": "#00b4d8",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-useref": {
+      "id": "node-useref",
+      "title": "useRef",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-refs",
+      "x": 480,
+      "y": 378,
+      "color": "#00b4d8",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-useimperativehandle": {
+      "id": "node-useimperativehandle",
+      "title": "useImperativeHandle",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-refs",
+      "x": 480,
+      "y": 486,
+      "color": "#00b4d8",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "branch-custom": {
+      "id": "branch-custom",
+      "title": "Custom",
+      "label": "",
+      "description": "",
+      "children": [
+        "node-usefetch",
+        "node-uselocalstorage",
+        "node-usedebounce"
+      ],
+      "parentId": "root",
+      "x": 260,
+      "y": 702,
+      "color": "#f7d794",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usefetch": {
+      "id": "node-usefetch",
+      "title": "useFetch",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-custom",
+      "x": 480,
+      "y": 594,
+      "color": "#f7d794",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-uselocalstorage": {
+      "id": "node-uselocalstorage",
+      "title": "useLocalStorage",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-custom",
+      "x": 480,
+      "y": 702,
+      "color": "#f7d794",
+      "collapsed": false,
+      "manuallyPositioned": false
+    },
+    "node-usedebounce": {
+      "id": "node-usedebounce",
+      "title": "useDebounce",
+      "label": "",
+      "description": "",
+      "children": [],
+      "parentId": "branch-custom",
+      "x": 480,
+      "y": 810,
+      "color": "#f7d794",
+      "collapsed": false,
+      "manuallyPositioned": false
+    }
+  },
+  "rootId": "root",
+  "viewport": {
+    "x": 544.6620689655173,
+    "y": 384,
+    "scale": 0.3972413793103448
+  }
+}

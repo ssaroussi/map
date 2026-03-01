@@ -63,6 +63,23 @@ export async function showSaveDialog(defaultName = 'untitled.map'): Promise<stri
   return result ?? null;
 }
 
+/** Opens a native save dialog for PNG and returns the chosen path, or null if cancelled. */
+export async function showSavePngDialog(defaultName = 'export.png'): Promise<string | null> {
+  if (!isTauri()) return null;
+  const { save } = await import('@tauri-apps/plugin-dialog');
+  const result = await save({
+    title: 'Export as PNG',
+    defaultPath: defaultName,
+    filters: [{ name: 'PNG Image', extensions: ['png'] }],
+  });
+  return result ?? null;
+}
+
+export async function writeBinaryFile(path: string, data: Uint8Array): Promise<void> {
+  const { writeFile } = await import('@tauri-apps/plugin-fs');
+  await writeFile(path, data);
+}
+
 export function getFileName(path: string): string {
   return path.split('/').pop()?.replace(/\.(map|json)$/, '') ?? path;
 }

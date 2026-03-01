@@ -7,6 +7,7 @@ import { ContextMenu } from '../Panels/ContextMenu';
 import { useMapStore } from '../../store/mapStore';
 import { useCanvasGestures } from '../../hooks/useCanvasGestures';
 import { useKeyboard } from '../../hooks/useKeyboard';
+import { setCanvasElement } from '../../utils/exportImage';
 
 export function Canvas() {
   const ref = useRef<HTMLDivElement>(null);
@@ -21,6 +22,7 @@ export function Canvas() {
   // Center viewport on load if default
   useEffect(() => {
     if (ref.current) {
+      setCanvasElement(ref.current);
       const { width, height } = ref.current.getBoundingClientRect();
       // Center at (0,0) in canvas coords
       if (viewport.x === 0 && viewport.y === 0) {
@@ -41,6 +43,7 @@ export function Canvas() {
         background: '#0a0a0f',
         cursor: 'default',
         userSelect: 'none',
+        outline: 'none',
       }}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}

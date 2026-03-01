@@ -16,6 +16,7 @@
     "@tauri-apps/plugin-dialog": "^2.6.0",
     "@tauri-apps/plugin-fs": "^2.4.5",
     "framer-motion": "^11.0.0",
+    "html-to-image": "^1.11.13",
     "immer": "^10.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",

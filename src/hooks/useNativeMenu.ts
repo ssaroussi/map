@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useMapStore, useTemporalStore } from '../store/mapStore';
+import { exportToPng } from '../utils/exportImage';
 
 const isTauri = () => typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 
@@ -35,6 +36,9 @@ export function useNativeMenu() {
             break;
           case 'magic':
             store.resetLayout();
+            break;
+          case 'export_png':
+            exportToPng();
             break;
         }
       });
