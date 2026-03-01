@@ -99,7 +99,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
         alignItems: 'center',
         justifyContent: 'center',
         background: isRoot ? 'var(--t-root-bg)' : 'var(--t-surface)',
-        border: `1.5px solid ${isRoot ? node.color + '60' : isSelected ? node.color : 'var(--t-border)'}`,
+        border: `1.5px solid ${isSelected ? node.color : isRoot ? node.color + '60' : 'var(--t-border)'}`,
         borderRadius: '10px',
         color: 'var(--t-text)',
         fontSize: isRoot ? '15px' : '13px',
