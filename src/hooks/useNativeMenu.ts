@@ -50,26 +50,16 @@ export function useNativeMenu() {
         }
       });
 
-      // Close-requested: ask to save if dirty, then exit via Rust command
-      unlistenClose = await listen('close-requested', async () => {
-        const { invoke } = await import('@tauri-apps/api/core');
-        const { isDirty, currentFilePath, saveMap } = useMapStore.getState();
+      // Close-requested: show DOM modal if unsaved, then exit via Rust command
+      unlistenClose = await listen('close-requested', () => {
+        const { isDirty, currentFilePath } = useMapStore.getState();
         const hasUnsavedWork = isDirty || !currentFilePath;
 
         if (hasUnsavedWork) {
-          const { ask } = await import('@tauri-apps/plugin-dialog');
-          const shouldSave = await ask(
-            'You have unsaved changes. Save before closing?',
-            { title: 'Unsaved Changes', okLabel: 'Save', cancelLabel: "Don't Save" }
-          );
-          if (shouldSave) {
-            await saveMap();
-            // If the file-picker was cancelled, isDirty is still true — abort close
-            if (useMapStore.getState().isDirty) return;
-          }
+          showSaveConfirmation();
+        } else {
+          doClose();
         }
-
-        invoke('close_app');
       });
 
       // Keep window title in sync with current file + dirty state
@@ -93,8 +83,74 @@ export function useNativeMenu() {
   }, []);
 }
 
+async function doClose() {
+  const { invoke } = await import('@tauri-apps/api/core');
+  invoke('close_app');
+}
+
+function showSaveConfirmation() {
+  if (document.getElementById('save-confirm-modal')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'save-confirm-modal';
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background: #1a1a2e; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 28px 32px; text-align: center;
+      color: #e8e8f0; font-family: system-ui, sans-serif; min-width: 300px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    ">
+      <h2 style="margin: 0 0 8px; font-size: 17px; font-weight: 600;">Unsaved Changes</h2>
+      <p style="margin: 0 0 24px; font-size: 14px; color: rgba(255,255,255,0.6);">
+        Do you want to save your changes before closing?
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button id="save-confirm-cancel" style="
+          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+          color: #e8e8f0; border-radius: 8px; padding: 8px 20px;
+          font-size: 14px; cursor: pointer;
+        ">Cancel</button>
+        <button id="save-confirm-discard" style="
+          background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+          color: #e8e8f0; border-radius: 8px; padding: 8px 20px;
+          font-size: 14px; cursor: pointer;
+        ">Don't Save</button>
+        <button id="save-confirm-save" style="
+          background: #7c5cfc; border: none;
+          color: #fff; border-radius: 8px; padding: 8px 20px;
+          font-size: 14px; cursor: pointer; font-weight: 600;
+        ">Save</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const dismiss = () => overlay.remove();
+
+  overlay.querySelector('#save-confirm-cancel')!.addEventListener('click', dismiss);
+
+  overlay.querySelector('#save-confirm-discard')!.addEventListener('click', () => {
+    dismiss();
+    doClose();
+  });
+
+  overlay.querySelector('#save-confirm-save')!.addEventListener('click', async () => {
+    dismiss();
+    await useMapStore.getState().saveMap();
+    // If the file-picker was cancelled, isDirty is still true — abort close
+    if (useMapStore.getState().isDirty) return;
+    doClose();
+  });
+}
+
 function showAbout() {
-  // Render a lightweight modal via DOM — avoids adding a React modal dependency
   if (document.getElementById('about-modal')) return;
 
   const overlay = document.createElement('div');
