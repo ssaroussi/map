@@ -55,6 +55,16 @@ pub fn run() {
         ],
       )?;
 
+      let theme_menu = Submenu::with_items(
+        app,
+        "Theme",
+        true,
+        &[
+          &MenuItem::with_id(app, "theme_default", "Default", true, None::<&str>)?,
+          &MenuItem::with_id(app, "theme_hacker", "Hacker", true, None::<&str>)?,
+        ],
+      )?;
+
       let view_menu = Submenu::with_items(
         app,
         "View",
@@ -65,6 +75,8 @@ pub fn run() {
           &MenuItem::with_id(app, "fit", "Fit to Screen", true, Some("CmdOrCtrl+0"))?,
           &PredefinedMenuItem::separator(app)?,
           &MenuItem::with_id(app, "magic", "Magic Layout", true, None::<&str>)?,
+          &PredefinedMenuItem::separator(app)?,
+          &theme_menu,
         ],
       )?;
 

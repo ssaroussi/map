@@ -44,8 +44,15 @@ export function useNativeMenu() {
           case 'export_png':
             exportToPng();
             break;
+          case 'theme_default':
+          case 'theme_hacker': {
+            const { useThemeStore } = await import('../store/themeStore');
+            const id = payload.replace('theme_', '') as 'default' | 'hacker';
+            useThemeStore.getState().setTheme(id);
+            setTimeout(() => useMapStore.getState().recolorNodes(), 0);
+            break;
+          }
           case 'close_window':
-            // Trigger same flow as clicking ✕ — Rust will re-emit close-requested
             getCurrentWindow().close();
             break;
           case 'about':
