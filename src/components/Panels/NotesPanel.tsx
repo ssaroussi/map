@@ -19,14 +19,12 @@ export function NotesPanel() {
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           style={{
             position: 'fixed',
-            right: 0,
-            top: 0,
-            bottom: 0,
+            right: 0, top: 0, bottom: 0,
             width: 320,
-            background: 'rgba(15,15,25,0.9)',
+            background: 'var(--t-panel-bg)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            borderLeft: '1px solid rgba(255,255,255,0.08)',
+            borderLeft: '1px solid var(--t-border)',
             display: 'flex',
             flexDirection: 'column',
             zIndex: 100,
@@ -34,10 +32,10 @@ export function NotesPanel() {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ color: '#e8e8f0', fontWeight: 600, fontSize: 15 }}>Notes</span>
+            <span style={{ color: 'var(--t-text)', fontWeight: 600, fontSize: 15 }}>Notes</span>
             <button
               onClick={() => setNotesPanel(null)}
-              style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 18 }}
+              style={{ background: 'none', border: 'none', color: 'var(--t-text-muted)', cursor: 'pointer', fontSize: 18 }}
             >×</button>
           </div>
           <div style={{ color: node.color, fontSize: 13, marginBottom: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -49,10 +47,10 @@ export function NotesPanel() {
             placeholder="Add notes..."
             style={{
               flex: 1,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--t-surface)',
+              border: '1px solid var(--t-border)',
               borderRadius: 8,
-              color: '#e8e8f0',
+              color: 'var(--t-text)',
               fontSize: 13,
               padding: 12,
               resize: 'none',

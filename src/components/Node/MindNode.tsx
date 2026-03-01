@@ -35,12 +35,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (e.button !== 0) return;
-    dragStart.current = {
-      mx: e.clientX,
-      my: e.clientY,
-      nx: node.x,
-      ny: node.y,
-    };
+    dragStart.current = { mx: e.clientX, my: e.clientY, nx: node.x, ny: node.y };
     hasDragged.current = false;
 
     const onMove = (me: MouseEvent) => {
@@ -56,9 +51,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
     const onUp = () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      if (!hasDragged.current) {
-        setSelected(nodeId);
-      }
+      if (!hasDragged.current) setSelected(nodeId);
       dragStart.current = null;
     };
 
@@ -81,7 +74,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
 
   const defaultShadow = isRoot
     ? `0 4px 20px ${node.color}40`
-    : `0 2px 8px rgba(0,0,0,0.2)`;
+    : `0 2px 8px rgba(0,0,0,0.3)`;
 
   const glowStyle = isSelected
     ? { boxShadow: `0 0 0 2px ${node.color}, 0 0 24px ${node.color}80` }
@@ -105,12 +98,10 @@ export function MindNode({ nodeId, isRoot }: Props) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: isRoot
-          ? `radial-gradient(ellipse at center, #1a1a2e, #0f0f1a)`
-          : `rgba(255,255,255,0.05)`,
-        border: `1.5px solid ${isRoot ? node.color + '60' : isSelected ? node.color : 'rgba(255,255,255,0.1)'}`,
+        background: isRoot ? 'var(--t-root-bg)' : 'var(--t-surface)',
+        border: `1.5px solid ${isRoot ? node.color + '60' : isSelected ? node.color : 'var(--t-border)'}`,
         borderRadius: '10px',
-        color: '#e8e8f0',
+        color: 'var(--t-text)',
         fontSize: isRoot ? '15px' : '13px',
         fontWeight: isRoot ? 700 : 500,
         cursor: isEditing ? 'text' : 'pointer',
@@ -133,7 +124,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
           maxWidth: '100%',
-          color: isRoot ? node.color : '#e8e8f0',
+          color: isRoot ? node.color : 'var(--t-text)',
           transition: 'color 0.2s ease',
         }}>
           {node.title || (isRoot ? 'Central Topic' : 'New Node')}

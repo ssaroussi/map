@@ -4,7 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 import { v4 as uuidv4 } from 'uuid';
 import { MapState, MindNode } from '../types';
 import { computeLayout } from '../algorithms/layout';
-import { ROOT_COLOR } from '../constants/colors';
+import { getRootColor, getBranchColors } from '../constants/colors';
 import { getAllDescendants } from '../algorithms/treeUtils';
 import {
   readFile,
@@ -31,7 +31,7 @@ function createInitialState(): MapState & FileState {
         children: [],
         parentId: null,
         x: 0, y: 0,
-        color: ROOT_COLOR,
+        color: getRootColor(),
         collapsed: false,
         manuallyPositioned: false,
       },
@@ -74,6 +74,7 @@ interface MapActions {
   moveNode: (nodeId: string, x: number, y: number) => void;
   reorderChild: (parentId: string, fromIndex: number, toIndex: number) => void;
   resetLayout: () => void;
+  recolorNodes: () => void;
   fitToScreen: (width: number, height: number) => void;
   panToNode: (nodeId: string) => void;
   // file actions
@@ -247,6 +248,26 @@ export const useMapStore = create<FullStore>()(
         });
         setTimeout(() => get().fitToScreen(window.innerWidth, window.innerHeight), 50);
         scheduleSave(get);
+      },
+
+      recolorNodes: () => {
+        set((state) => {
+          const branchColors = getBranchColors();
+          const rootNode = state.nodes[state.rootId];
+          if (rootNode) rootNode.color = getRootColor();
+          // Assign new theme colors to depth-1 branches and propagate down
+          rootNode?.children.forEach((childId, index) => {
+            const color = branchColors[index % branchColors.length];
+            const propagate = (id: string, c: string) => {
+              const n = state.nodes[id];
+              if (!n) return;
+              n.color = c;
+              n.children.forEach(cid => propagate(cid, c));
+            };
+            propagate(childId, color);
+          });
+          state.isDirty = true;
+        });
       },
 
       panToNode: (nodeId) => {

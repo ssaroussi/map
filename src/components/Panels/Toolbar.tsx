@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { useMapStore, useTemporalStore } from '../../store/mapStore';
+import { useThemeStore } from '../../store/themeStore';
+import { THEMES, ThemeId } from '../../themes';
 import { getFileName } from '../../store/fileManager';
 
 export function Toolbar() {
@@ -7,6 +9,7 @@ export function Toolbar() {
   const viewport = useMapStore(s => s.viewport);
   const fitToScreen = useMapStore(s => s.fitToScreen);
   const resetLayout = useMapStore(s => s.resetLayout);
+  const recolorNodes = useMapStore(s => s.recolorNodes);
   const currentFilePath = useMapStore(s => s.currentFilePath);
   const isDirty = useMapStore(s => s.isDirty);
   const recentFiles = useMapStore(s => s.recentFiles);
@@ -16,22 +19,27 @@ export function Toolbar() {
   const saveMap = useMapStore(s => s.saveMap);
   const saveMapAs = useMapStore(s => s.saveMapAs);
 
+  const { themeId, setTheme } = useThemeStore();
   const [showRecent, setShowRecent] = useState(false);
 
   const undo = () => (useTemporalStore.getState() as any).undo();
   const redo = () => (useTemporalStore.getState() as any).redo();
+
+  const switchTheme = (id: ThemeId) => {
+    setTheme(id);
+    // Recolor existing nodes to match new theme palette
+    setTimeout(() => recolorNodes(), 0);
+  };
 
   const btn = (label: string, onClick: () => void, title?: string, accent?: boolean) => (
     <button
       title={title}
       onClick={onClick}
       style={{
-        background: accent
-          ? 'linear-gradient(135deg, rgba(124,92,252,0.25), rgba(0,180,216,0.25))'
-          : 'rgba(255,255,255,0.06)',
-        border: `1px solid ${accent ? 'rgba(124,92,252,0.4)' : 'rgba(255,255,255,0.1)'}`,
+        background: accent ? 'var(--t-accent)' : 'var(--t-surface)',
+        border: `1px solid ${accent ? 'var(--t-accent-border)' : 'var(--t-border)'}`,
         borderRadius: 7,
-        color: accent ? '#c4b0ff' : '#e8e8f0',
+        color: accent ? 'var(--t-accent-text)' : 'var(--t-text)',
         fontSize: 12,
         padding: '5px 11px',
         cursor: 'pointer',
@@ -40,15 +48,11 @@ export function Toolbar() {
         whiteSpace: 'nowrap',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.background = accent
-          ? 'linear-gradient(135deg, rgba(124,92,252,0.45), rgba(0,180,216,0.45))'
-          : 'rgba(255,255,255,0.12)';
+        e.currentTarget.style.background = accent ? 'var(--t-accent-hover)' : 'var(--t-hover)';
         e.currentTarget.style.transform = 'scale(1.05)';
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.background = accent
-          ? 'linear-gradient(135deg, rgba(124,92,252,0.25), rgba(0,180,216,0.25))'
-          : 'rgba(255,255,255,0.06)';
+        e.currentTarget.style.background = accent ? 'var(--t-accent)' : 'var(--t-surface)';
         e.currentTarget.style.transform = 'scale(1)';
       }}
       onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.95)'; }}
@@ -59,12 +63,10 @@ export function Toolbar() {
   );
 
   const divider = () => (
-    <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.12)', flexShrink: 0 }} />
+    <div style={{ width: 1, height: 20, background: 'var(--t-separator)', flexShrink: 0 }} />
   );
 
-  const fileName = currentFilePath
-    ? getFileName(currentFilePath)
-    : 'Untitled';
+  const fileName = currentFilePath ? getFileName(currentFilePath) : 'Untitled';
 
   return (
     <div
@@ -76,10 +78,10 @@ export function Toolbar() {
         display: 'flex',
         gap: 8,
         alignItems: 'center',
-        background: 'rgba(15,15,25,0.85)',
+        background: 'var(--t-toolbar-bg)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '1px solid var(--t-border)',
         borderRadius: 12,
         padding: '8px 14px',
         zIndex: 50,
@@ -88,7 +90,7 @@ export function Toolbar() {
     >
       {/* File name */}
       <span style={{
-        color: isDirty ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.3)',
+        color: isDirty ? 'var(--t-text-muted)' : 'var(--t-text-dim)',
         fontSize: 12,
         maxWidth: 140,
         overflow: 'hidden',
@@ -100,7 +102,6 @@ export function Toolbar() {
 
       {divider()}
 
-      {/* File operations */}
       {btn('New', newMap, 'New map')}
 
       {/* Open with recent dropdown */}
@@ -109,10 +110,10 @@ export function Toolbar() {
           onClick={() => setShowRecent(v => !v)}
           onBlur={() => setTimeout(() => setShowRecent(false), 150)}
           style={{
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--t-surface)',
+            border: '1px solid var(--t-border)',
             borderRadius: 7,
-            color: '#e8e8f0',
+            color: 'var(--t-text)',
             fontSize: 12,
             padding: '5px 11px',
             cursor: 'pointer',
@@ -130,8 +131,8 @@ export function Toolbar() {
             top: '100%',
             left: 0,
             marginTop: 6,
-            background: 'rgba(18,18,28,0.97)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--t-popup-bg)',
+            border: '1px solid var(--t-border)',
             borderRadius: 10,
             padding: 6,
             minWidth: 220,
@@ -143,16 +144,16 @@ export function Toolbar() {
               onClick={() => { openMap(); setShowRecent(false); }}
               style={{
                 display: 'block', width: '100%', textAlign: 'left',
-                background: 'none', border: 'none', color: '#e8e8f0',
+                background: 'none', border: 'none', color: 'var(--t-text)',
                 fontSize: 13, padding: '7px 12px', cursor: 'pointer', borderRadius: 6,
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--t-hover)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}
             >
               Browse…
             </button>
             {recentFiles.length > 0 && (
-              <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', margin: '4px 8px' }} />
+              <div style={{ height: 1, background: 'var(--t-separator)', margin: '4px 8px' }} />
             )}
             {recentFiles.map(path => (
               <button
@@ -160,15 +161,15 @@ export function Toolbar() {
                 onClick={() => { openMapFromPath(path); setShowRecent(false); }}
                 style={{
                   display: 'block', width: '100%', textAlign: 'left',
-                  background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
+                  background: 'none', border: 'none', color: 'var(--t-text-muted)',
                   fontSize: 12, padding: '6px 12px', cursor: 'pointer', borderRadius: 6,
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--t-hover)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'none'}
               >
                 {getFileName(path)}
-                <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 10, marginLeft: 6 }}>
+                <span style={{ color: 'var(--t-text-dim)', fontSize: 10, marginLeft: 6 }}>
                   {path.split('/').slice(-2, -1)[0]}
                 </span>
               </button>
@@ -182,15 +183,13 @@ export function Toolbar() {
 
       {divider()}
 
-      {/* Undo / Redo */}
       {btn('↩ Undo', undo, 'Ctrl+Z')}
       {btn('↪ Redo', redo, 'Ctrl+Y')}
 
       {divider()}
 
-      {/* Zoom */}
       {btn('−', () => setViewport({ scale: Math.max(0.2, viewport.scale - 0.1) }))}
-      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, minWidth: 40, textAlign: 'center' }}>
+      <span style={{ color: 'var(--t-text-muted)', fontSize: 12, minWidth: 40, textAlign: 'center' }}>
         {Math.round(viewport.scale * 100)}%
       </span>
       {btn('+', () => setViewport({ scale: Math.min(3, viewport.scale + 0.1) }))}
@@ -199,6 +198,29 @@ export function Toolbar() {
       {divider()}
 
       {btn('✦ Magic', resetLayout, 'Re-layout all nodes evenly', true)}
+
+      {divider()}
+
+      {/* Theme switcher */}
+      {(Object.values(THEMES) as typeof THEMES[ThemeId][]).map(theme => (
+        <button
+          key={theme.id}
+          title={`${theme.name} theme`}
+          onClick={() => switchTheme(theme.id)}
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: '50%',
+            border: themeId === theme.id ? '2px solid var(--t-text)' : '2px solid var(--t-border)',
+            background: theme.branchColors[0],
+            cursor: 'pointer',
+            padding: 0,
+            flexShrink: 0,
+            boxShadow: themeId === theme.id ? `0 0 6px ${theme.branchColors[0]}` : 'none',
+            transition: 'all 0.2s',
+          }}
+        />
+      ))}
     </div>
   );
 }

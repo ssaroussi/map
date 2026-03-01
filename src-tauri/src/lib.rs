@@ -40,6 +40,8 @@ pub fn run() {
           )?,
           &PredefinedMenuItem::separator(app)?,
           &MenuItem::with_id(app, "export_png", "Export as PNG…", true, None::<&str>)?,
+          &PredefinedMenuItem::separator(app)?,
+          &MenuItem::with_id(app, "close_window", "Close Window", true, Some("CmdOrCtrl+W"))?,
         ],
       )?;
 

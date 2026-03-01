@@ -40,7 +40,7 @@ export function Canvas() {
         width: '100%',
         height: '100%',
         overflow: 'hidden',
-        background: '#0a0a0f',
+        background: 'var(--t-bg)',
         cursor: 'default',
         userSelect: 'none',
         outline: 'none',

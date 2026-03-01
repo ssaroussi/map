@@ -44,6 +44,10 @@ export function useNativeMenu() {
           case 'export_png':
             exportToPng();
             break;
+          case 'close_window':
+            // Trigger same flow as clicking ✕ — Rust will re-emit close-requested
+            getCurrentWindow().close();
+            break;
           case 'about':
             showAbout();
             break;

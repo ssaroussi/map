@@ -1,4 +1,5 @@
 import { toPng } from 'html-to-image';
+import { useMapStore } from '../store/mapStore';
 
 let canvasEl: HTMLElement | null = null;
 
@@ -11,6 +12,11 @@ export async function exportToPng(): Promise<void> {
     console.error('Canvas element not registered');
     return;
   }
+
+  // Fit the whole graph into view before capturing
+  useMapStore.getState().fitToScreen(window.innerWidth, window.innerHeight);
+  // Wait one frame for the viewport transition to settle
+  await new Promise(r => setTimeout(r, 300));
 
   // html-to-image uses SVG foreignObject which WebKit clips box-shadow blurs
   // at element boundaries, making glows look bad. Replace them with a clean

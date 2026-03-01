@@ -1,6 +1,6 @@
 import { MindNode } from '../types';
 import { ROOT_RADIUS, HORIZONTAL_STEP, VERTICAL_SPACING, NODE_HEIGHT } from '../constants/layout';
-import { BRANCH_COLORS } from '../constants/colors';
+import { getBranchColors } from '../constants/colors';
 
 function getSubtreeHeight(nodes: Record<string, MindNode>, nodeId: string): number {
   const node = nodes[nodeId];
@@ -61,7 +61,8 @@ export function computeLayout(nodes: Record<string, MindNode>, rootId: string): 
   mainTopics.forEach((childId, index) => {
     const child = nodes[childId];
     if (!child) return;
-    child.color = BRANCH_COLORS[index % BRANCH_COLORS.length];
+    const branchColors = getBranchColors();
+    child.color = branchColors[index % branchColors.length];
     propagateColor(nodes, childId, child.color);
   });
 

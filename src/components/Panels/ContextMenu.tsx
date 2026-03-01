@@ -20,19 +20,13 @@ export function ContextMenu() {
       key={label}
       onClick={() => { action(); setContextMenu(null); }}
       style={{
-        display: 'block',
-        width: '100%',
-        textAlign: 'left',
-        background: 'none',
-        border: 'none',
-        color: '#e8e8f0',
-        fontSize: 13,
-        padding: '7px 14px',
-        cursor: 'pointer',
-        borderRadius: 6,
+        display: 'block', width: '100%', textAlign: 'left',
+        background: 'none', border: 'none',
+        color: 'var(--t-text)',
+        fontSize: 13, padding: '7px 14px', cursor: 'pointer', borderRadius: 6,
         transition: 'background 0.15s',
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+      onMouseEnter={e => (e.currentTarget.style.background = 'var(--t-hover)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
     >
       {label}
@@ -41,18 +35,14 @@ export function ContextMenu() {
 
   return (
     <>
-      <div
-        style={{ position: 'fixed', inset: 0, zIndex: 150 }}
-        onClick={() => setContextMenu(null)}
-      />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 150 }} onClick={() => setContextMenu(null)} />
       <div
         style={{
           position: 'fixed',
-          left: menu.x,
-          top: menu.y,
+          left: menu.x, top: menu.y,
           zIndex: 200,
-          background: 'rgba(18,18,28,0.97)',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'var(--t-popup-bg)',
+          border: '1px solid var(--t-border)',
           borderRadius: 10,
           padding: '6px',
           backdropFilter: 'blur(16px)',
@@ -68,7 +58,7 @@ export function ContextMenu() {
         {item('Notes (F4)', () => setNotesPanel(menu.nodeId))}
         {!isRoot && (
           <>
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', margin: '4px 8px' }} />
+            <div style={{ height: 1, background: 'var(--t-separator)', margin: '4px 8px' }} />
             {item('Delete', () => deleteNode(menu.nodeId))}
           </>
         )}
