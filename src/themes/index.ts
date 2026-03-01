@@ -24,7 +24,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       '--t-root-bg':     'radial-gradient(ellipse at center, #1a1a2e, #0f0f1a)',
       '--t-toolbar-bg':  'rgba(15,15,25,0.85)',
       '--t-panel-bg':    'rgba(15,15,25,0.9)',
-      '--t-popup-bg':    'rgba(18,18,28,0.97)',
+      '--t-popup-bg':    '#0d0d14',
       '--t-separator':   'rgba(255,255,255,0.1)',
       '--t-hover':       'rgba(255,255,255,0.08)',
       '--t-accent':      'linear-gradient(135deg, rgba(124,92,252,0.25), rgba(0,180,216,0.25))',

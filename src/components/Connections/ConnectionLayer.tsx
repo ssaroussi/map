@@ -19,7 +19,9 @@ export function ConnectionLayer() {
   for (const node of Object.values(nodes)) {
     if (!visibleIds.has(node.id) || node.collapsed) continue;
     for (const childId of node.children) {
-      connections.push({ id: `${node.id}-${childId}`, from: node.id, to: childId });
+      if (visibleIds.has(childId)) {
+        connections.push({ id: `${node.id}-${childId}`, from: node.id, to: childId });
+      }
     }
   }
 
