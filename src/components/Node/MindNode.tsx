@@ -125,7 +125,7 @@ export function MindNode({ nodeId, isRoot }: Props) {
           color: isRoot ? node.color : 'var(--t-text)',
           transition: 'color 0.2s ease',
         }}>
-          {node.title || (isRoot ? 'Central Topic' : 'New Node')}
+          {node.title || (isRoot ? 'Map' : 'New Node')}
         </span>
       )}
       <NodeLabel label={node.label} color={node.color} />

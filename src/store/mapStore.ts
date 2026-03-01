@@ -25,7 +25,7 @@ function createInitialState(): MapState & FileState {
     nodes: {
       [rootId]: {
         id: rootId,
-        title: 'Central Topic',
+        title: 'Map',
         label: '',
         description: '',
         children: [],

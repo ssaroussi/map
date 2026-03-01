@@ -15,7 +15,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     name: 'Default',
     vars: {
       '--t-bg':          '#0a0a0f',
-      '--t-surface':     'rgba(255,255,255,0.05)',
+      '--t-surface':     '#1a1a2a',
       '--t-border':      'rgba(255,255,255,0.1)',
       '--t-text':        '#e8e8f0',
       '--t-text-muted':  'rgba(255,255,255,0.4)',
@@ -42,7 +42,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     name: 'Hacker',
     vars: {
       '--t-bg':          '#000000',
-      '--t-surface':     'rgba(0,255,65,0.06)',
+      '--t-surface':     '#001a00',
       '--t-border':      'rgba(0,255,65,0.2)',
       '--t-text':        '#00ff41',
       '--t-text-muted':  'rgba(0,255,65,0.55)',
