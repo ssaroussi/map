@@ -21,6 +21,7 @@ export function Toolbar() {
 
   const { themeId, setTheme } = useThemeStore();
   const [showRecent, setShowRecent] = useState(false);
+  const [showThemes, setShowThemes] = useState(false);
 
   const undo = () => (useTemporalStore.getState() as any).undo();
   const redo = () => (useTemporalStore.getState() as any).redo();
@@ -202,25 +203,88 @@ export function Toolbar() {
       {divider()}
 
       {/* Theme switcher */}
-      {(Object.values(THEMES) as typeof THEMES[ThemeId][]).map(theme => (
+      <div style={{ position: 'relative' }}>
         <button
-          key={theme.id}
-          title={`${theme.name} theme`}
-          onClick={() => switchTheme(theme.id)}
+          onClick={() => setShowThemes(v => !v)}
+          onBlur={() => setTimeout(() => setShowThemes(false), 150)}
+          title="Switch theme"
           style={{
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            border: themeId === theme.id ? '2px solid var(--t-text)' : '2px solid var(--t-border)',
-            background: theme.branchColors[0],
+            background: 'var(--t-surface)',
+            border: '1px solid var(--t-border)',
+            borderRadius: 7,
+            color: 'var(--t-text)',
+            fontSize: 12,
+            padding: '5px 11px',
             cursor: 'pointer',
-            padding: 0,
-            flexShrink: 0,
-            boxShadow: themeId === theme.id ? `0 0 6px ${theme.branchColors[0]}` : 'none',
-            transition: 'all 0.2s',
+            fontFamily: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            whiteSpace: 'nowrap',
           }}
-        />
-      ))}
+        >
+          <span
+            style={{
+              width: 10, height: 10, borderRadius: '50%',
+              background: THEMES[themeId].branchColors[0],
+              flexShrink: 0,
+              display: 'inline-block',
+            }}
+          />
+          {THEMES[themeId].name} ▾
+        </button>
+
+        {showThemes && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            marginTop: 6,
+            background: 'var(--t-popup-bg)',
+            border: '1px solid var(--t-border)',
+            borderRadius: 10,
+            padding: 6,
+            minWidth: 140,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(16px)',
+            zIndex: 200,
+          }}>
+            {(Object.values(THEMES) as typeof THEMES[ThemeId][]).map(theme => (
+              <button
+                key={theme.id}
+                onClick={() => { switchTheme(theme.id); setShowThemes(false); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  width: '100%',
+                  textAlign: 'left',
+                  background: themeId === theme.id ? 'var(--t-hover)' : 'none',
+                  border: 'none',
+                  color: 'var(--t-text)',
+                  fontSize: 13,
+                  padding: '7px 12px',
+                  cursor: 'pointer',
+                  borderRadius: 6,
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--t-hover)'}
+                onMouseLeave={e => e.currentTarget.style.background = themeId === theme.id ? 'var(--t-hover)' : 'none'}
+              >
+                <span style={{
+                  width: 12, height: 12, borderRadius: '50%',
+                  background: theme.branchColors[0],
+                  flexShrink: 0,
+                  boxShadow: themeId === theme.id ? `0 0 6px ${theme.branchColors[0]}` : 'none',
+                }} />
+                {theme.name}
+                {themeId === theme.id && (
+                  <span style={{ marginLeft: 'auto', color: 'var(--t-text-muted)', fontSize: 11 }}>✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
